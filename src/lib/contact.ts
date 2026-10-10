@@ -1,0 +1,6 @@
+import { z } from 'zod';
+import { services } from './content';
+const allowedServices=[...services.map(s=>s.name),'Not sure yet','Founding client program'];
+export const contactSchema=z.object({name:z.string().trim().min(1).max(100),email:z.email().max(254),company:z.string().trim().max(150).optional().default(''),message:z.string().trim().min(10).max(5000),timeline:z.enum(['Just exploring','As soon as possible','In 1–2 months','This quarter']),services:z.array(z.string().refine(value=>allowedServices.includes(value))).max(7).default([]),website:z.string().max(500).optional().default('')});
+export function escapeHtml(value:string){return value.replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]!));}
+export function emailContent(data:z.infer<typeof contactSchema>){const rows=[['Name',data.name],['Email',data.email],['Company',data.company||'Not provided'],['Services',data.services.join(', ')||'Not specified'],['Timeline',data.timeline],['Message',data.message]];return {textContent:rows.map(([key,value])=>`${key}: ${value}`).join('\n\n'),htmlContent:`<h1>New Opsilura enquiry</h1>${rows.map(([key,value])=>`<h3>${key}</h3><p style="white-space:pre-wrap">${escapeHtml(value)}</p>`).join('')}`};}
