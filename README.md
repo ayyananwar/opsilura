@@ -14,7 +14,7 @@ With the preview running and Playwright Chromium installed, `node tests/browser.
 
 ## Contact delivery
 
-Copy `.env.example` to `.env.local`. Set a Brevo API key, a Brevo-verified sender address, recipient address, and Upstash Redis REST URL/token. The form fails clearly without configuration; it never pretends to deliver. Production requires distributed rate limiting. On Vercel, set these variables for each intended environment, then redeploy. Do not use `NEXT_PUBLIC_` for credentials.
+Copy `.env.example` to `.env.local`. Set a Brevo API key, a Brevo-verified sender address, recipient address, and the Vercel Upstash integration's `KV_REST_API_URL` and `KV_REST_API_TOKEN`. Use the standard read/write REST token: rate limiting writes counters, so `KV_REST_API_READ_ONLY_TOKEN` cannot be used. `KV_URL` and `REDIS_URL` are not needed by this HTTP-based client. The form fails clearly without configuration; it never pretends to deliver. Production requires distributed rate limiting. On Vercel, set these variables for each intended environment, then redeploy. Do not use `NEXT_PUBLIC_` for credentials.
 
 Visitor email is used as reply-to; it is never used as the sender. No visitor newsletter subscription or automatic acknowledgement is sent. Test a real delivery with production credentials before going live.
 

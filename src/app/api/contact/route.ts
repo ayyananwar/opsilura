@@ -3,7 +3,9 @@ import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
 import { contactSchema, emailContent } from '@/lib/contact';
 export const runtime='nodejs';
-const limiter=process.env.UPSTASH_REDIS_REST_URL&&process.env.UPSTASH_REDIS_REST_TOKEN?new Ratelimit({redis:Redis.fromEnv(),limiter:Ratelimit.slidingWindow(5,'10 m'),prefix:'opsilura:contact'}):null;
+const redisUrl=process.env.KV_REST_API_URL;
+const redisToken=process.env.KV_REST_API_TOKEN;
+const limiter=redisUrl&&redisToken?new Ratelimit({redis:new Redis({url:redisUrl,token:redisToken}),limiter:Ratelimit.slidingWindow(5,'10 m'),prefix:'opsilura:contact'}):null;
 export async function POST(request:NextRequest){
  const origin=request.headers.get('origin');
  let sameOrigin=false;try{const url=new URL(origin||'');sameOrigin=url.host===request.headers.get('host')&&url.protocol===request.nextUrl.protocol;}catch{}
